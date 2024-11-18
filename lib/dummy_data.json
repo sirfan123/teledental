@@ -1,0 +1,70 @@
+{
+  "appointments": [
+    {
+      "id": "1",
+      "date": "2024-11-20",
+      "time": "10:00 AM",
+      "patient": "John Doe",
+      "status": "Confirmed"
+    },
+    {
+      "id": "2",
+      "date": "2024-11-21",
+      "time": "2:00 PM",
+      "patient": "Jane Smith",
+      "status": "Pending"
+    }
+  ],
+  "treatment_history": [
+    {
+      "id": "1",
+      "date": "2024-10-15",
+      "procedure": "Teeth Cleaning",
+      "notes": "Routine cleaning, no issues."
+    },
+    {
+      "id": "2",
+      "date": "2024-10-22",
+      "procedure": "Cavity Filling",
+      "notes": "Minor cavity filled on upper molar."
+    }
+  ],
+  "messages": [
+    {
+      "id": "1",
+      "sender": "John Doe",
+      "recipient": "Dr. Smith",
+      "content": "What should I do about sensitivity after my cleaning?",
+      "isUrgent": false,
+      "response": null
+    },
+    {
+      "id": "2",
+      "sender": "Jane Smith",
+      "recipient": "Dr. Brown",
+      "content": "I am experiencing severe pain after my filling.",
+      "isUrgent": true,
+      "response": null
+    }
+  ],
+  "notifications": [
+    {
+      "id": "1",
+      "title": "Upcoming Appointment",
+      "message": "Your appointment with John Doe is scheduled for 2024-11-20 at 10:00 AM.",
+      "dateTime": "2024-11-19 08:00:00"
+    },
+    {
+      "id": "2",
+      "title": "Hygiene Tip",
+      "message": "Don't forget to floss daily to maintain healthy gums!",
+      "dateTime": "2024-11-17 11:21:00"
+    },
+    {
+      "id": "3",
+      "title": "Patient Follow-Up",
+      "message": "Check in with John Doe regarding post-cleaning sensitivity.",
+      "dateTime": "2024-11-17 10:00:00"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+name: teledental
+description: A Flutter application for managing dental healthcare.
+version: 1.0.0+1
+environment:
+  sdk: ">=2.18.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  table_calendar: ^3.0.7
+  path_provider: ^2.0.11 # For accessing writable directories
+
+flutter:
+  # Assets declaration
+  assets:
+    - lib/dummy_data.json
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
