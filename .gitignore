@@ -1,0 +1,14 @@
+# Ignore everything
+/*
+
+# But include the lib folder and pubspec.yaml
+!/lib/
+!/pubspec.yaml
+!/.gitignore
+!/pubspec.lock
+
+# Ignore system and IDE files
+.DS_Store
+.idea/
+.vscode/
+*.log

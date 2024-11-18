@@ -50,18 +50,31 @@ class MessagesViewModel {
   }
 
   Future<void> sendMessageResponse(String messageId, String response) async {
-    try {
-      final message = messages.firstWhere((msg) => msg.id == messageId);
-      message.response = response;
+  try {
+    // Read the existing JSON structure
+    final String jsonString = await writableFile.readAsString();
+    final Map<String, dynamic> jsonData = jsonDecode(jsonString);
 
-      final updatedData = {
-        "messages": messages.map((msg) => msg.toJson()).toList(),
-      };
+    // Find and update the specific message in the `messages` section
+    final messagesList = jsonData['messages'] as List<dynamic>;
+    final messageIndex = messagesList.indexWhere((msg) => msg['id'] == messageId);
 
-      await writableFile.writeAsString(jsonEncode(updatedData));
-      print('Response saved successfully!');
-    } catch (error) {
-      print('Error saving message response: $error');
+    if (messageIndex != -1) {
+      messagesList[messageIndex]['response'] = response;
+    } else {
+      print('Error: Message with id $messageId not found.');
+      return;
     }
+
+    // Update the `messages` section in the JSON structure
+    jsonData['messages'] = messagesList;
+
+    // Write the updated JSON structure back to the file
+    await writableFile.writeAsString(jsonEncode(jsonData));
+    print('Message response updated successfully!');
+  } catch (error) {
+    print('Error updating message response: $error');
   }
+}
+
 }

@@ -17,12 +17,22 @@ class DoctorTreatmentViewModel {
 
     if (!(await writableFile.exists())) {
       print('Copying dummy_data.json to writable directory...');
-      final String assetData = await rootBundle.loadString('lib/dummy_data.json');
+      final String assetData =
+          await rootBundle.loadString('lib/dummy_data.json');
       final Map<String, dynamic> parsedData = jsonDecode(assetData);
 
-      // Ensure the `messages` section exists in the initial copy
+      // Ensure all sections exist in the initial copy
+      if (parsedData['appointments'] == null) {
+        parsedData['appointments'] = [];
+      }
+      if (parsedData['treatment_history'] == null) {
+        parsedData['treatment_history'] = [];
+      }
       if (parsedData['messages'] == null) {
-        parsedData['messages'] = []; // Initialize as an empty list if not present
+        parsedData['messages'] = [];
+      }
+      if (parsedData['notifications'] == null) {
+        parsedData['notifications'] = [];
       }
 
       await writableFile.writeAsString(jsonEncode(parsedData));
@@ -31,6 +41,7 @@ class DoctorTreatmentViewModel {
       print('Writable file already exists at: $filePath');
     }
   }
+
   //assets is not writeable in flutter???
   Future<void> loadData() async {
     try {
@@ -57,7 +68,8 @@ class DoctorTreatmentViewModel {
     }
   }
 
-  List<String> get patients => appointments.map((appt) => appt['patient'] as String).toList();
+  List<String> get patients =>
+      appointments.map((appt) => appt['patient'] as String).toList();
 
   Future<void> addTreatmentForPatient(
       String patientName, String procedure, String notes) async {
