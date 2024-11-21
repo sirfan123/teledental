@@ -31,5 +31,5 @@ TeleDental is a communication app between patient and dentist streamlining the c
 
 ## Design changes
 
-    - The main change we have is viewmodels, previously we mapped each model to a respective viewmodel that then mapped to two different views. However since each viewmodel has its own respective logic this gets long and hard to track quickly. Our solution was to map each model to two seperate viewmodels now(EX: doctor_treatment_view_model and patient_treatment_view_model). Much easier to track these viewmodels and use with the associated files now. 
+- The main change we have is viewmodels, previously we mapped each model to a respective viewmodel that then mapped to two different views. However since each viewmodel has its own respective logic this gets long and hard to track quickly. Our solution was to map each model to two seperate viewmodels now(EX: doctor_treatment_view_model and patient_treatment_view_model). Much easier to track these viewmodels and use with the associated files now. 
     
