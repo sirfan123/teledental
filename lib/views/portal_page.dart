@@ -8,6 +8,13 @@ class PortalPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Replace 'assets/images/logo.png' with the actual path to your image
+            Image.asset(
+              'assets/images/dentalLogo.png',
+              height: 100, // Adjust as needed
+              width: 100, // Adjust as needed
+            ),
+            SizedBox(height: 20),
             Text(
               'SmileCare',
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
