@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import '../../viewmodels/patient_appointment_view_model.dart';
 import 'package:teledental/widgets/bottom_nav_bar_widget.dart';
 import 'patient_history_page.dart';
 import 'patient_message_page.dart';
@@ -30,13 +31,26 @@ class PatientHomeContent extends StatefulWidget {
 class _PatientHomeContentState extends State<PatientHomeContent> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  final PatientAppointmentViewModel _appointmentViewModel =
+      PatientAppointmentViewModel();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    await _appointmentViewModel.loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0), // Add padding around the calendar
+          padding:
+              const EdgeInsets.all(16.0), // Add padding around the calendar
           child: TableCalendar(
             firstDay: DateTime.utc(2020, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
@@ -103,9 +117,11 @@ class _PatientHomeContentState extends State<PatientHomeContent> {
     );
   }
 
-  void _bookAppointment(DateTime date, String time) {
+  void _bookAppointment(DateTime date, String time) async {
+    await _appointmentViewModel.addAppointment(date, time, "John Doe");
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Appointment booked for $time on ${date.toLocal()}')),
+      SnackBar(
+          content: Text('Appointment booked for $time on ${date.toLocal()}')),
     );
   }
 }
