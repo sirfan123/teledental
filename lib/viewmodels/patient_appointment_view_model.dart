@@ -36,7 +36,6 @@ class PatientAppointmentViewModel {
 
   Future<void> addAppointment(
       DateTime date, String time, String patientName) async {
-    // Load current data
     await loadData();
 
     final newId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -51,20 +50,36 @@ class PatientAppointmentViewModel {
       status: "Pending",
     );
 
-    // Add the new appointment
     appointments.add(newAppointment);
-
-    await _saveAppointments();
+    await _saveAppointments(newAppointment);
   }
 
-  Future<void> _saveAppointments() async {
+  Future<void> _saveAppointments(AppointmentModel newAppointment) async {
     final String response = await writableFile.readAsString();
     final Map<String, dynamic> data = jsonDecode(response);
 
     data['appointments'] = appointments.map((appt) => appt.toJson()).toList();
 
+    // Add a new notification for the upcoming appointment
+    // Let's assume we schedule the reminder 1 day before the appointment
+    final appointmentDateTime =
+        DateTime.parse("${newAppointment.date} 09:00:00");
+
+    final reminderDateTime = appointmentDateTime.subtract(Duration(days: 1));
+    final notificationsList = (data['notifications'] as List<dynamic>?) ?? [];
+
+    notificationsList.add({
+      'id': DateTime.now().millisecondsSinceEpoch.toString(),
+      'title': 'Upcoming Appointment',
+      'message':
+          'Your appointment with ${newAppointment.patient} is scheduled for ${newAppointment.date} at ${newAppointment.time}.',
+      'dateTime': reminderDateTime.toIso8601String(),
+    });
+
+    data['notifications'] = notificationsList;
+
     await writableFile.writeAsString(jsonEncode(data));
-    print('Appointments updated successfully!');
+    print('Appointments and Notifications updated successfully!');
   }
 
   String _twoDigit(int number) => number.toString().padLeft(2, '0');
