@@ -62,7 +62,11 @@ class _DoctorTreatmentPageState extends State<DoctorTreatmentPage> {
                 selectedPatient = value;
               });
             },
-            items: _viewModel.patients.map((patient) {
+            // fixing error on doctor history page
+            items: _viewModel.patients
+                .toSet() // Remove duplicates by converting to a Set
+                .toList() // Convert back to a List
+                .map((patient) {
               return DropdownMenuItem(
                 value: patient,
                 child: Text(patient),

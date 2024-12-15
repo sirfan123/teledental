@@ -56,7 +56,7 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
             icon: SizedBox(), // No icon
           ),
           BottomNavigationBarItem(
-            label: 'History',
+            label: 'Treatment',
             icon: SizedBox(),
           ),
           BottomNavigationBarItem(
