@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/appointment_model.dart';
+import '../services/notification_services.dart';
 
 class PatientAppointmentViewModel {
   List<AppointmentModel> appointments = [];
@@ -38,7 +39,8 @@ class PatientAppointmentViewModel {
       DateTime date, String time, String patientName) async {
     await loadData();
 
-    final newId = DateTime.now().millisecondsSinceEpoch.toString();
+    final newId = (DateTime.now().millisecondsSinceEpoch ~/ 1000)
+        .toString(); // Reduce to seconds
     final formattedDate =
         "${date.year}-${_twoDigit(date.month)}-${_twoDigit(date.day)}";
 
@@ -52,6 +54,18 @@ class PatientAppointmentViewModel {
 
     appointments.add(newAppointment);
     await _saveAppointments(newAppointment);
+
+    // Schedule a push notification for the appointment
+    final appointmentDateTime = _parseDateTime(newAppointment.date, time);
+    await NotificationService.scheduleNotification(
+      id: int.parse(newId), // Unique ID for the notification
+      title: "Upcoming Appointment",
+      body:
+          "Your appointment with $patientName is scheduled for $time on $formattedDate.",
+      scheduledTime: appointmentDateTime,
+    );
+
+    print('Appointment added and notification scheduled!');
   }
 
   Future<void> _saveAppointments(AppointmentModel newAppointment) async {
@@ -63,7 +77,7 @@ class PatientAppointmentViewModel {
     // Add a new notification for the upcoming appointment
     // Let's assume we schedule the reminder 1 day before the appointment
     final appointmentDateTime =
-        DateTime.parse("${newAppointment.date} 09:00:00");
+        DateTime.parse("${newAppointment.date}T09:00:00");
 
     final reminderDateTime = appointmentDateTime.subtract(Duration(days: 1));
     final notificationsList = (data['notifications'] as List<dynamic>?) ?? [];
@@ -83,4 +97,15 @@ class PatientAppointmentViewModel {
   }
 
   String _twoDigit(int number) => number.toString().padLeft(2, '0');
+
+  DateTime _parseDateTime(String date, String time) {
+    final isPM = time.contains("PM");
+    final timeParts = time.split(" ")[0].split(":");
+    int hour =
+        int.parse(timeParts[0]) + (isPM && timeParts[0] != "12" ? 12 : 0);
+    if (!isPM && timeParts[0] == "12") hour = 0; // Handle 12 AM case
+    final int minute = int.parse(timeParts[1]);
+    return DateTime.parse(
+        "$date ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}:00");
+  }
 }

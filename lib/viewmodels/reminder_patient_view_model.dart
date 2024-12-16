@@ -61,4 +61,21 @@ class ReminderPatientViewModel {
       print('Error loading reminders data: $error');
     }
   }
+
+  Future<void> deleteReminder(String reminderId) async {
+    // Remove the reminder from the list
+    allNotifications
+        .removeWhere((notification) => notification.id == reminderId);
+
+    // Update the JSON file
+    final String response = await writableFile.readAsString();
+    final Map<String, dynamic> data = jsonDecode(response);
+    final rawNotifications = data['notifications'] as List<dynamic>? ?? [];
+
+    data['notifications'] =
+        rawNotifications.where((notif) => notif['id'] != reminderId).toList();
+
+    await writableFile.writeAsString(jsonEncode(data));
+    print('Reminder deleted successfully!');
+  }
 }

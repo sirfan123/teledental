@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'views/portal_page.dart';
 import 'views/patient/patient_home_page.dart';
 import 'views/doctor/doctor_home_page.dart';
+import 'services/notification_services.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.init(); // Initialize notifications
   runApp(DentalHealthcareApp());
 }
 

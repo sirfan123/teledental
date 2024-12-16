@@ -50,31 +50,44 @@ class MessagesViewModel {
   }
 
   Future<void> sendMessageResponse(String messageId, String response) async {
-  try {
-    // Read the existing JSON structure
-    final String jsonString = await writableFile.readAsString();
-    final Map<String, dynamic> jsonData = jsonDecode(jsonString);
+    try {
+      // Read the existing JSON structure
+      final String jsonString = await writableFile.readAsString();
+      final Map<String, dynamic> jsonData = jsonDecode(jsonString);
 
-    // Find and update the specific message in the `messages` section
-    final messagesList = jsonData['messages'] as List<dynamic>;
-    final messageIndex = messagesList.indexWhere((msg) => msg['id'] == messageId);
+      // Find and update the specific message in the `messages` section
+      final messagesList = jsonData['messages'] as List<dynamic>;
+      final messageIndex =
+          messagesList.indexWhere((msg) => msg['id'] == messageId);
 
-    if (messageIndex != -1) {
-      messagesList[messageIndex]['response'] = response;
-    } else {
-      print('Error: Message with id $messageId not found.');
-      return;
+      if (messageIndex != -1) {
+        messagesList[messageIndex]['response'] = response;
+      } else {
+        print('Error: Message with id $messageId not found.');
+        return;
+      }
+
+      // Update the `messages` section in the JSON structure
+      jsonData['messages'] = messagesList;
+
+      // Write the updated JSON structure back to the file
+      await writableFile.writeAsString(jsonEncode(jsonData));
+      print('Message response updated successfully!');
+    } catch (error) {
+      print('Error updating message response: $error');
     }
-
-    // Update the `messages` section in the JSON structure
-    jsonData['messages'] = messagesList;
-
-    // Write the updated JSON structure back to the file
-    await writableFile.writeAsString(jsonEncode(jsonData));
-    print('Message response updated successfully!');
-  } catch (error) {
-    print('Error updating message response: $error');
   }
-}
 
+  Future<void> deleteMessage(String messageId) async {
+    messages.removeWhere((message) => message.id == messageId);
+
+    // Update the JSON file
+    final String jsonString = await writableFile.readAsString();
+    final Map<String, dynamic> data = jsonDecode(jsonString);
+
+    data['messages'] = messages.map((msg) => msg.toJson()).toList();
+
+    await writableFile.writeAsString(jsonEncode(data));
+    print('Message deleted and file updated!');
+  }
 }

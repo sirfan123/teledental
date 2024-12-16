@@ -79,6 +79,14 @@ class _PatientMessagePageState extends State<PatientMessagePage> {
     );
   }
 
+  void _deleteMessage(String messageId) async {
+    await _viewModel.deleteMessage(messageId);
+    setState(() {});
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Message deleted successfully!')),
+    );
+  }
+
   Widget _buildMessageList() {
     if (_viewModel.messages.isEmpty) {
       return Center(
@@ -103,9 +111,23 @@ class _PatientMessagePageState extends State<PatientMessagePage> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(message.content),
-              trailing: message.isUrgent
-                  ? Icon(Icons.priority_high, color: Colors.red)
-                  : null,
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (message.isUrgent)
+                    Icon(Icons.priority_high, color: Colors.red),
+                  InkWell(
+                    onTap: () => _deleteMessage(
+                        message.id), // Add your delete logic here
+                    child: Image.asset(
+                      'assets/images/trash_icon.jpg', // Path to your custom image
+                      height: 24, // Adjust size as needed
+                      width: 24,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ],
+              ),
               onTap: () {
                 if (isFromDoctor) {
                   // Patient can reply to doctor's message

@@ -24,6 +24,15 @@ class _ReminderDoctorPageState extends State<ReminderDoctorPage> {
     setState(() {});
   }
 
+  void _deleteReminder(String notificationId) async {
+    await _viewModel.deleteNotification(
+        notificationId); // Ensure this exists in the ViewModel
+    setState(() {});
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Reminder deleted successfully!')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,15 +48,31 @@ class _ReminderDoctorPageState extends State<ReminderDoctorPage> {
               itemBuilder: (context, index) {
                 final notification = _viewModel.notifications[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: ListTile(
                     title: Text(
                       notification.title,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(notification.message),
-                    trailing: Text(
-                      '${notification.dateTime.hour}:${notification.dateTime.minute} on ${notification.dateTime.month}/${notification.dateTime.day}',
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${notification.dateTime.hour}:${notification.dateTime.minute.toString().padLeft(2, '0')} on ${notification.dateTime.month}/${notification.dateTime.day}',
+                        ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () => _deleteReminder(notification.id),
+                          child: Image.asset(
+                            'assets/images/trash_icon.jpg', // Path to your delete icon image
+                            height: 24,
+                            width: 24,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );

@@ -24,6 +24,20 @@ class _ReminderPatientPageState extends State<ReminderPatientPage> {
     });
   }
 
+  Future<void> _deleteReminder(String notificationId) async {
+    try {
+      await _viewModel.deleteReminder(notificationId);
+      await _loadData(); // Reload data to update the list
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Reminder deleted successfully!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete reminder: $e')),
+      );
+    }
+  }
+
   Widget _buildAppointmentList() {
     if (_viewModel.upcomingAppointments.isEmpty) {
       return Padding(
@@ -36,8 +50,7 @@ class _ReminderPatientPageState extends State<ReminderPatientPage> {
     } else {
       return ListView.builder(
         shrinkWrap: true,
-        physics:
-            NeverScrollableScrollPhysics(), // Prevents scrolling inside the column
+        physics: AlwaysScrollableScrollPhysics(), // Enable scrolling
         itemCount: _viewModel.upcomingAppointments.length,
         itemBuilder: (context, index) {
           final notification = _viewModel.upcomingAppointments[index];
@@ -49,8 +62,23 @@ class _ReminderPatientPageState extends State<ReminderPatientPage> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(notification.message),
-              trailing: Text(
-                '${notification.dateTime.month}/${notification.dateTime.day} ${notification.dateTime.hour}:${notification.dateTime.minute.toString().padLeft(2, '0')}',
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${notification.dateTime.month}/${notification.dateTime.day} ${notification.dateTime.hour}:${notification.dateTime.minute.toString().padLeft(2, '0')}',
+                  ),
+                  GestureDetector(
+                    onTap: () => _deleteReminder(
+                        notification.id), // Add your delete logic here
+                    child: Image.asset(
+                      'assets/images/trash_icon.jpg', // Path to your custom image
+                      height: 24, // Adjust size as needed
+                      width: 24,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ],
               ),
             ),
           );
@@ -67,47 +95,43 @@ class _ReminderPatientPageState extends State<ReminderPatientPage> {
     return Scaffold(
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Hygiene Tip
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Card(
-                      color: Colors.lightBlueAccent,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.lightbulb,
-                                color: Colors.white, size: 40),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                hygieneTipMessage,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                ),
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Card(
+                    color: Colors.lightBlueAccent,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        children: [
+                          Icon(Icons.lightbulb, color: Colors.white, size: 40),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              hygieneTipMessage,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  // Upcoming Appointments
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      'Upcoming Appointments',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Upcoming Appointments',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  _buildAppointmentList(),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: _buildAppointmentList(),
+                ), // Wrapped in Expanded to ensure scrolling
+              ],
             ),
     );
   }

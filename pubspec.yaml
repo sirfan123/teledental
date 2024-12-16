@@ -9,12 +9,16 @@ dependencies:
     sdk: flutter
   table_calendar: ^3.0.7
   path_provider: ^2.0.11 # For accessing writable directories
+  flutter_local_notifications: ^17.0.0 # For local notifications
+  flutter_native_timezone: ^2.0.0 # For timezone support
+  timezone: ^0.9.2 # To manage accurate timezone scheduling
 
 flutter:
   # Assets declaration
   assets:
     - lib/dummy_data.json
     - assets/images/dentalLogo.png
+    - assets/images/trash_icon.jpg
 
 dev_dependencies:
   flutter_test:

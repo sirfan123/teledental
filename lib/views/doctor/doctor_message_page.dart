@@ -64,6 +64,15 @@ class _DoctorMessagePageState extends State<DoctorMessagePage> {
     );
   }
 
+  void _deleteMessage(String messageId) async {
+    await _viewModel
+        .deleteMessage(messageId); // Ensure delete logic is in the ViewModel
+    setState(() {});
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Message deleted successfully!')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,16 +88,31 @@ class _DoctorMessagePageState extends State<DoctorMessagePage> {
               itemBuilder: (context, index) {
                 final message = _viewModel.messages[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: ListTile(
                     title: Text(
                       message.sender,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(message.content),
-                    trailing: message.isUrgent
-                        ? Icon(Icons.priority_high, color: Colors.red)
-                        : null,
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (message.isUrgent)
+                          Icon(Icons.priority_high, color: Colors.red),
+                        GestureDetector(
+                          onTap: () =>
+                              _deleteMessage(message.id), // Delete logic
+                          child: Image.asset(
+                            'assets/images/trash_icon.jpg', // Path to your delete image
+                            height: 24,
+                            width: 24,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ],
+                    ),
                     onTap: () => _showMessageResponseDialog(message),
                   ),
                 );

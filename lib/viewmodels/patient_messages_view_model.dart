@@ -123,4 +123,21 @@ class PatientMessagesViewModel {
       print('Error replying to message: $error');
     }
   }
+
+  // delete messages
+  Future<void> deleteMessage(String messageId) async {
+    // Remove the message from the list
+    messages.removeWhere((message) => message.id == messageId);
+
+    // Update the JSON file
+    final String response = await writableFile.readAsString();
+    final Map<String, dynamic> data = jsonDecode(response);
+    final rawMessages = data['messages'] as List<dynamic>? ?? [];
+
+    data['messages'] =
+        rawMessages.where((msg) => msg['id'] != messageId).toList();
+
+    await writableFile.writeAsString(jsonEncode(data));
+    print('Message deleted successfully!');
+  }
 }

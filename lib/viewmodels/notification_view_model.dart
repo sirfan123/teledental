@@ -53,4 +53,18 @@ class NotificationsViewModel {
     // Simulate scheduling a push notification
     print('Push notification scheduled: ${notification.title}');
   }
+
+  Future<void> deleteNotification(String notificationId) async {
+    notifications
+        .removeWhere((notification) => notification.id == notificationId);
+
+    // Update the JSON file
+    final String jsonString = await writableFile.readAsString();
+    final Map<String, dynamic> data = jsonDecode(jsonString);
+
+    data['notifications'] = notifications.map((noti) => noti.toJson()).toList();
+
+    await writableFile.writeAsString(jsonEncode(data));
+    print('Notification deleted and file updated!');
+  }
 }

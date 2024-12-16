@@ -5,6 +5,7 @@ import 'package:teledental/widgets/bottom_nav_bar_widget.dart';
 import 'patient_history_page.dart';
 import 'patient_message_page.dart';
 import '../reminders/reminder_patient_page.dart';
+import '/services/notification_services.dart';
 
 class PatientHomePage extends StatelessWidget {
   @override
@@ -118,10 +119,64 @@ class _PatientHomeContentState extends State<PatientHomeContent> {
   }
 
   void _bookAppointment(DateTime date, String time) async {
-    await _appointmentViewModel.addAppointment(date, time, "John Doe");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text('Appointment booked for $time on ${date.toLocal()}')),
-    );
+    try {
+      final formattedDate =
+          "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+
+      // Parse time string (e.g., "10:00 AM") into DateTime components
+      final parsedTime = _parseTimeString(time);
+      final DateTime scheduledDateTime = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        parsedTime.hour,
+        parsedTime.minute,
+      );
+
+      print("Scheduled DateTime: $scheduledDateTime");
+
+      // Add appointment
+      await _appointmentViewModel.addAppointment(date, time, "John Doe");
+
+      // Schedule notification
+      await NotificationService.scheduleNotification(
+        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        title: "Upcoming Appointment",
+        body: "Your appointment is scheduled for $time on $formattedDate",
+        scheduledTime: scheduledDateTime, // Correctly parsed DateTime
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Appointment booked for $time on $formattedDate')),
+      );
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to book appointment: $e')),
+      );
+    }
+  }
+
+// Helper function to parse time string (e.g., "2:00 PM")
+  TimeOfDay _parseTimeString(String time) {
+    try {
+      final isPM = time.contains("PM");
+      final timeParts =
+          time.split(" ")[0].split(":"); // Split into hours and minutes
+      int hour = int.parse(timeParts[0]);
+      final int minute = int.parse(timeParts[1]);
+
+      // Convert 12-hour to 24-hour format
+      if (isPM && hour != 12) {
+        hour += 12;
+      } else if (!isPM && hour == 12) {
+        hour = 0; // Handle midnight (12:00 AM)
+      }
+
+      return TimeOfDay(hour: hour, minute: minute);
+    } catch (e) {
+      throw FormatException("Invalid time format: $time");
+    }
   }
 }
