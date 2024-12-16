@@ -6,7 +6,7 @@
 !/pubspec.yaml
 !/.gitignore
 !/pubspec.lock
-!/assests
+!/assets
 
 # Ignore system and IDE files
 .DS_Store
