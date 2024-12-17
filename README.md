@@ -14,14 +14,14 @@ TeleDental is a communication app between patient and dentist streamlining the c
 
 ## Key tasks
 
-- (MORE THAN HALF DONE)Appointment Scheduling: Patients can schedule, modify, or cancel dental appointments, while professionals can manage their availability.
+- (DONE)Appointment Scheduling: Patients can schedule, modify, or cancel dental appointments, while professionals can manage their availability.
     - Dummy appointments show up on the dentist home page if you click a date on the calender
     - From the patient portal you can click a date on the calender and schedule an appointment time however the data isnt stored properly yet, you cant see this update on dentist portal just yet
 
 - (DONE)Treatment History Tracking: Users can access past treatments with detailed records of procedures, and medications.
     - If you go to the patient portal and history you can see the dummy appointments we loaded in the initial json here
 
-- (MORE THAN HALF DONE)Reminders and Notifications: Automated reminders for upcoming appointments, medication, and hygiene tips.
+- (DONE -- what we were able to atleast)Reminders and Notifications: Automated reminders for upcoming appointments, medication, and hygiene tips.
     - We have prepopulated json data filling the reminder pages for respective portals however getting actual push notifications to appear on the simulator is something we are still working on
 
 - (DONE)Patient-Dentist Communication: A messaging system that allows patients to communicate directly with their dental professionals. 
